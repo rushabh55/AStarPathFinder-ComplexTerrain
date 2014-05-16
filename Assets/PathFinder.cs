@@ -4,18 +4,19 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PathFinder : MonoBehaviour {
-    const float maxWidth = 20;
-    const float maxHeight = 20;
+    const float maxWidth = 2;
+    const float maxHeight = 2;
     protected Tile currentTile;
     public Terrain terrain;
     public GameObject target;
     int noofhoriDivisions = 0;
     int noofVerDivisions = 0;
     public static Tile[,] matrix;
-    private bool obstacleFound = false;
 
     Tile targetTile;
     Tile thisTile;
+
+    bool done = false;
 
     Queue<Tile> PathFound = null;
 
@@ -39,7 +40,7 @@ public class PathFinder : MonoBehaviour {
                 t.current.y = j * maxHeight;
                 t.current.width = maxWidth;
                 t.current.height = maxHeight;
-                t.current.center = terrain.terrainData.GetHeight((int)t.current.x + (int)t.current.width / 2, (int)t.current.y + (int)t.current.height);
+                t.current.terrainHeight = terrain.terrainData.GetHeight((int)t.current.x + (int)t.current.width / 2, (int)t.current.y + (int)t.current.height);                
                 t.current.i = i;
                 t.current.j = j;
                 matrix[i, j] = t;
@@ -51,29 +52,31 @@ public class PathFinder : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		targetTile = TileBase.GetTileFromPos(this.transform.position);
-        if (target != null)
-        {
-            Ray r = new Ray(this.transform.position, target.transform.position);
-            if (Physics.Raycast(r))
-            {
-                obstacleFound = true;
-            }
-            else
-                obstacleFound = false;
-        }
+		    targetTile = TileBase.GetTileFromPos(this.transform.position);
+            //if (target != null)
+            //{
+            //    Ray r = new Ray(this.transform.position, target.transform.position);
+            //    if (Physics.Raycast(r))
+            //    {
+            //        obstacleFound = true;
+            //    }
+            //    else
+            //        obstacleFound = false;
+            //}
 
-            obstacleFound = false ;
-            if (PathFound == null || targetTile.current.Contains(new Point((int)this.transform.position.x, (int)this.transform.position.y)))
-                AStarWrapper();
+
+            if (!targetTile.current.Contains(new Point((int)this.transform.position.x, (int)this.transform.position.y)))
+                if (PathFound == null)
+                    AStarWrapper();
 
            
 		    if(PathFound.Count > 1)
 		    {
-			    Vector3 towards = PathFound.Peek().current.position.ToVector(this.transform.position.z);
+			    Vector3 towards = PathFound.Peek().current.PositionVec;
+                //towards = new Vector3(PathFound.Peek().current.x, 0, PathFound.Peek().current.y);
 			    this.transform.position = Vector3.MoveTowards(this.transform.position, towards, Time.deltaTime * 10);
 
-	            if (Vector3.Distance(this.transform.position, PathFound.Peek().current.position.ToVector(this.transform.position.z)) < 10)
+	            if (Vector3.Distance(this.transform.position, towards) < 10)
 	            {
 	                PathFound.Dequeue();
 	            }
@@ -82,13 +85,18 @@ public class PathFinder : MonoBehaviour {
 		    {
 			    Debug.Log("Breaking");
 		    }
-           
-        
+
+        if(!done)
+            foreach (var t in PathFound)
+            {
+                done = true;
+                //var w = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                //w.transform.position = t.current.PositionVec;
+            }
 	}
 
     void AStarWrapper()
-    {        
-
+    { 
         if(thisTile == null)
             thisTile = TileBase.GetTileFromPos(target.transform.position);
 
@@ -99,5 +107,6 @@ public class PathFinder : MonoBehaviour {
 
     void OnCollisionEnter(Collision obj)
     {
+
     }
 }

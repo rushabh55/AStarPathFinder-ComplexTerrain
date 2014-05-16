@@ -39,11 +39,12 @@ public class Point
 }
     public class TileBase 
     {
-        public float center;
+        //public float center;
         public float x;
         public float y;
         public float width;
         public float height;
+        public float terrainHeight;
 
         public bool searched;
 
@@ -84,13 +85,22 @@ public class Point
         {
             get
             {
-                return new Point((int)x, (int)y);
+                return new Point((int)(x + width / 2), (int)(y + height / 2));
             }
         }
+
+        public UnityEngine.Vector3 PositionVec
+        {
+            get
+            {
+                return new UnityEngine.Vector3((int)(x + width / 2), 0, (int)(y + height / 2));
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Center : " + center);
+            //sb.AppendLine("Center : " + center);
             sb.AppendLine("x : " + x);
             sb.AppendLine("y : " + y);
             sb.AppendLine("Width : " + width);

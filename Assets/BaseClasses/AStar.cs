@@ -34,8 +34,8 @@ using UnityEngine;
                 while(q.Count != 0)
                 {
                     //Fitness function
-				float h = getH(target, q.Peek());
-				float g = getG(current, q.Peek());
+				    float h = getH(target, q.Peek());
+				    float g = getG(current, q.Peek());
                     double fitness =  h + g;
 
                     if (min > fitness)
@@ -43,8 +43,6 @@ using UnityEngine;
                         min = fitness;
                         tileWithMin = q.Peek();
                     }
-                    Debug.Log("Dequeuing:");
-                    Debug.Log(q.Peek());
                     q.Dequeue();
                 }
 
@@ -72,7 +70,7 @@ using UnityEngine;
 
         private static float getH(Tile next, Tile current)
         {
-            if (Physics.Raycast(new Vector3(next.current.position.x, next.current.position.y, 0), new Vector3(current.current.position.x, current.current.position.y, 0)))
+            if (Physics.Raycast(new Vector3(next.current.position.x, 0, next.current.position.y), new Vector3(current.current.position.x, 0, next.current.position.y)))
             {
                 return float.MaxValue;
             }
