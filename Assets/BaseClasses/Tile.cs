@@ -6,15 +6,15 @@ using System.Text;
 
 public class Point
 {
-    public int x;
-    public int y;
+	public int x { get {return p1; } set{p1 = value;}}
+	public int y {get {return p2;} set {p2 = value;}}
     private int p1;
     private int p2;
 
     public Point(int p1, int p2)
     {
-        this.p1 = p1;
-        this.p2 = p2;
+        this.x = p1;
+        this.y = p2;
     }
 
     public Point()
@@ -24,7 +24,12 @@ public class Point
 
     public UnityEngine.Vector2 ToVector()
     {
-        return new UnityEngine.Vector2(x, y);
+        return new UnityEngine.Vector2(p1, p2);
+    }
+
+    public UnityEngine.Vector3 ToVector(float z)
+    {
+        return new UnityEngine.Vector3(p1, p2, z);
     }
 
     public static Point ToPoint(UnityEngine.Vector2 vector)

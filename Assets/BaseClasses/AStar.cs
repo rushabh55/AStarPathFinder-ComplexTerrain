@@ -34,7 +34,9 @@ using UnityEngine;
                 while(q.Count != 0)
                 {
                     //Fitness function
-                    double fitness = getH(target, q.Peek()) + getG(current, q.Peek());
+				float h = getH(target, q.Peek());
+				float g = getG(current, q.Peek());
+                    double fitness =  h + g;
 
                     if (min > fitness)
                     {
@@ -45,22 +47,25 @@ using UnityEngine;
                     Debug.Log(q.Peek());
                     q.Dequeue();
                 }
-                Debug.Log("MIN:");
-                Debug.Log(tileWithMin.current);
-                if (tileWithMin.current.Contains(new Point() { x = (int)target.current.x, y = (int)target.current.y }))
+
+				Point p = new Point((int)target.current.x, (int)target.current.y);
+                if (tileWithMin.current.Contains(p))
                 {
                     targetFlag = tileWithMin;
+					list.Add(targetFlag);
+					break;
                 }
                 else
                 {
-                    list.Add(tileWithMin);
+					if(list.Count > 5000)
+						break;
+                    
+					list.Add(tileWithMin);
                     q.Enqueue(tileWithMin);
                 }
 
-                break;
-            }
-
-            
+             //   break;
+            }            
             return list;
         }
 
@@ -71,7 +76,9 @@ using UnityEngine;
             {
                 return float.MaxValue;
             }
-            return Vector2.Distance(next.current.position.ToVector(), current.current.position.ToVector());
+		Vector2 ONE = next.current.position.ToVector();
+		Vector2 TWO =  current.current.position.ToVector();
+		return Vector2.Distance(ONE, TWO);
         }
 
         private static float getG(Tile origin, Tile current)
