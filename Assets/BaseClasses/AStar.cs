@@ -70,12 +70,13 @@ using UnityEngine;
 
         private static float getH(Tile next, Tile current)
         {
-            if (Physics.Raycast(new Vector3(next.current.position.x, 0, next.current.position.y), new Vector3(current.current.position.x, 0, next.current.position.y)))
+            if (!Physics.Raycast(new Vector3(next.current.position.x, 0, next.current.position.y), new Vector3(current.current.position.x, 0, next.current.position.y)))
             {
+                Debug.Log("Max");
                 return float.MaxValue;
             }
-		Vector2 ONE = next.current.position.ToVector();
-		Vector2 TWO =  current.current.position.ToVector();
+		    Vector2 ONE = next.current.position.ToVector();
+		    Vector2 TWO =  current.current.position.ToVector();
 		return Vector2.Distance(ONE, TWO);
         }
 

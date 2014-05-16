@@ -4,8 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PathFinder : MonoBehaviour {
-    const float maxWidth = 2;
-    const float maxHeight = 2;
+    const float maxWidth = 1;
+    const float maxHeight = 1;
     protected Tile currentTile;
     public Terrain terrain;
     public GameObject target;
@@ -20,6 +20,8 @@ public class PathFinder : MonoBehaviour {
 
     Queue<Tile> PathFound = null;
 
+    bool finding = false;
+
 	// Use this for initialization
 	void Start () {
         currentTile = new Tile();
@@ -31,6 +33,7 @@ public class PathFinder : MonoBehaviour {
         noofhoriDivisions = (int)(terrain.terrainData.size.x / maxWidth);
         noofVerDivisions = (int)(terrain.terrainData.size.z / maxHeight);
         matrix = new Tile[noofhoriDivisions, noofVerDivisions];
+        int y = 0;
         for(int i = 0 ; i < noofhoriDivisions; i++)
         {
             for(int j = 0 ; j < noofVerDivisions; j++)
@@ -44,6 +47,9 @@ public class PathFinder : MonoBehaviour {
                 t.current.i = i;
                 t.current.j = j;
                 matrix[i, j] = t;
+                Color r = Color.red;
+                r.r += y++;
+             //   Debug.DrawLine(t.current.PositionVec, new Vector3(), r);
             }
         }
 
@@ -53,6 +59,7 @@ public class PathFinder : MonoBehaviour {
 	void Update () {
 		
 		    targetTile = TileBase.GetTileFromPos(this.transform.position);
+            this.transform.LookAt(target.transform);
             //if (target != null)
             //{
             //    Ray r = new Ray(this.transform.position, target.transform.position);
@@ -66,8 +73,11 @@ public class PathFinder : MonoBehaviour {
 
 
             if (!targetTile.current.Contains(new Point((int)this.transform.position.x, (int)this.transform.position.y)))
-                if (PathFound == null)
-                    AStarWrapper();
+             if (PathFound == null && !done)
+            {
+                AStarWrapper();
+                done = false;
+            }
 
            
 		    if(PathFound.Count > 1)
