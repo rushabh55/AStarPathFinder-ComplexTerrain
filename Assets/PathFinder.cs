@@ -4,8 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PathFinder : MonoBehaviour {
-    const float maxWidth = 1;
-    const float maxHeight = 1;
+    const float maxWidth = 25;
+    const float maxHeight = 25;
     protected Tile currentTile;
     public Terrain terrain;
     public GameObject target;
