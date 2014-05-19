@@ -3,9 +3,21 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+public class Vector3Col
+{
+	public Vector3 start;
+	public Vector3 end;
+
+	public Vector3Col(Vector3 a, Vector3 b)
+	{
+		start = a;
+		end = b;
+	}
+};
+
 public class PathFinder : MonoBehaviour {
-    const float maxWidth = 25;
-    const float maxHeight = 25;
+    const float maxWidth = 40;
+    const float maxHeight = 40;
     protected Tile currentTile;
     public Terrain terrain;
     public GameObject target;
@@ -18,14 +30,17 @@ public class PathFinder : MonoBehaviour {
 
     bool done = false;
 
-    Queue<Tile> PathFound = null;
+	Stack<Tile> PathFound = null;
 
     bool finding = false;
+
+	public static List<Vector3Col> debugLineColl = new List<Vector3Col>();
 
 	// Use this for initialization
 	void Start () {
         currentTile = new Tile();
         Init();
+	
 	}
 
     public void Init()
@@ -54,41 +69,35 @@ public class PathFinder : MonoBehaviour {
         }
 
     }
-	
+
 	// Update is called once per frame
 	void Update () {
-		
-		    targetTile = TileBase.GetTileFromPos(this.transform.position);
-            this.transform.LookAt(target.transform);
-            //if (target != null)
-            //{
-            //    Ray r = new Ray(this.transform.position, target.transform.position);
-            //    if (Physics.Raycast(r))
-            //    {
-            //        obstacleFound = true;
-            //    }
-            //    else
-            //        obstacleFound = false;
-            //}
-
-
+		    targetTile = TileBase.GetTileFromPos(target.transform.position);
+          
             if (!targetTile.current.Contains(new Point((int)this.transform.position.x, (int)this.transform.position.y)))
-             if (PathFound == null && !done)
-            {
-                AStarWrapper();
-                done = false;
-            }
+                if (PathFound == null && !done)
+                {
+                    AStarWrapper();
+                    done = false;
+                }
 
-           
+           if (PathFound != null)
 		    if(PathFound.Count > 1)
 		    {
 			    Vector3 towards = PathFound.Peek().current.PositionVec;
-                //towards = new Vector3(PathFound.Peek().current.x, 0, PathFound.Peek().current.y);
-			    this.transform.position = Vector3.MoveTowards(this.transform.position, towards, Time.deltaTime * 10);
+				towards.y = this.transform.position.y;
 
-	            if (Vector3.Distance(this.transform.position, towards) < 10)
+				Debug.DrawLine(this.transform.position, towards, Color.red);
+
+                this.gameObject.GetComponent<SmoothLookAt>().target = towards;
+                
+                this.transform.position = Vector3.MoveTowards(this.transform.position, towards, Time.deltaTime * 25);
+                this.transform.LookAt(this.transform.forward);
+				var temp = Vector3.Distance(this.transform.position, towards) ;
+	            if (temp < 1)
 	            {
-	                PathFound.Dequeue();
+	                PathFound.Pop();
+				    Debug.Log(PathFound.Count);
 	            }
 		    }
 		    else
@@ -96,21 +105,27 @@ public class PathFinder : MonoBehaviour {
 			    Debug.Log("Breaking");
 		    }
 
-        if(!done)
+        if(!done && PathFound != null)
             foreach (var t in PathFound)
             {
                 done = true;
-                //var w = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                //w.transform.position = t.current.PositionVec;
+                var w = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                w.transform.position = t.current.PositionVec;
             }
+
+		foreach(var t in debugLineColl)
+		{
+			Debug.DrawLine(t.start, t.end);
+		}
+
 	}
 
     void AStarWrapper()
     { 
         if(thisTile == null)
-            thisTile = TileBase.GetTileFromPos(target.transform.position);
-
-        PathFound = new Queue<Tile>(AStar.GetPath(targetTile, thisTile));        
+            thisTile = TileBase.GetTileFromPos(this.transform.position);
+		var t = BFS.GetPath(targetTile, thisTile);
+        PathFound = new Stack<Tile>(t);        
     }
 
 

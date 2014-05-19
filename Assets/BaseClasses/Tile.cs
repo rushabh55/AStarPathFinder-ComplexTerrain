@@ -118,7 +118,7 @@ public class Point
         public static Tile GetTop(TileBase t)
         {
             if (t.j >= max_j)
-                t.j = max_j - 1;
+				return null;
 
             return PathFinder.matrix[t.i, t.j + 1];
         }
@@ -126,7 +126,7 @@ public class Point
         public static Tile GetRight(TileBase t)
         {
             if (t.i >= max_i)
-                t.i = max_i - 1;
+				return null;
 
             return PathFinder.matrix[t.i + 1, t.j];
         }
@@ -134,7 +134,7 @@ public class Point
         public static Tile GetLeft(TileBase t)
         {
             if(t.i <= 0)
-                t.i = 1;
+				return null;
 
             return PathFinder.matrix[t.i -1, t.j];
         }
@@ -142,17 +142,36 @@ public class Point
         public static Tile GetBottom(TileBase t)
         {
             if (t.j <= 0)
-                t.j = 1;
+				return null;
 
             return PathFinder.matrix[t.i, t.j - 1];
+        }
+
+        public static List<Tile> GetNeighbours(TileBase t)
+        {
+            List<Tile> list = new List<Tile>();
+            if (GetLeft(t) != null)
+                list.Add(GetLeft(t));
+
+            if (GetRight(t) != null)
+                list.Add(GetRight(t));
+
+            if (GetTop(t) != null)
+                list.Add(GetTop(t));
+
+            if(GetBottom(t) != null)
+                list.Add(GetBottom(t));
+
+            return list;
         }
 
         public static Tile GetTileFromPos(UnityEngine.Vector3 position)
         {
             foreach (var t in PathFinder.matrix)
             {
-                if (t.current.Contains(new Point() { x = (int)position.x, y = (int)position.z }))
-                    return t;
+				if(t != null)
+	                if (t.current.Contains(new Point() { x = (int)position.x, y = (int)position.z }))
+	                    return t;
             }
             throw new Exception("Element not inside");
         }
