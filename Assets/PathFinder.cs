@@ -16,6 +16,7 @@ public class Vector3Col
 };
 
 public class PathFinder : MonoBehaviour {
+	public float speed = 10;
     public GameObject GUITEXT;
     const float maxWidth = 40;
     const float maxHeight = 40;
@@ -74,8 +75,6 @@ public class PathFinder : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
-        float speed = 20;
 		    targetTile = TileBase.GetTileFromPos(target.transform.position);
           
             if (!targetTile.current.Contains(new Point((int)this.transform.position.x, (int)this.transform.position.y)))
@@ -106,6 +105,7 @@ public class PathFinder : MonoBehaviour {
 		    else
 		    {
                 this.transform.position = Vector3.MoveTowards(this.transform.position, target.transform.position, Time.deltaTime * speed);
+				this.transform.LookAt(target.transform);
 		    }
 
         if(!done && PathFound != null)
