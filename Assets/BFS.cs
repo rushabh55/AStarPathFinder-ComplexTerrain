@@ -16,16 +16,7 @@ public class BFS
         {
             double min = double.MaxValue;
 			Tile minTile = internalData.FirstOrDefault();
-            for (int i = 0; i < internalData.Count; i++)
-            {
-                var fitness = getH(Target, internalData.ElementAt(i)) + getG(origin, internalData.ElementAt(i));
-                if (min > fitness)
-                {
-                    min = fitness;
-                    minTile = internalData.ElementAt(i);
-                }
-            }
-
+            
             foreach (var u in path)
             {
                 if (u.current.Contains(p))

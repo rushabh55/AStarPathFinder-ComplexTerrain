@@ -16,6 +16,7 @@ public class Vector3Col
 };
 
 public class PathFinder : MonoBehaviour {
+    public GameObject GUITEXT;
     const float maxWidth = 40;
     const float maxHeight = 40;
     protected Tile currentTile;
@@ -36,11 +37,12 @@ public class PathFinder : MonoBehaviour {
 
 	public static List<Vector3Col> debugLineColl = new List<Vector3Col>();
 
+    
+
 	// Use this for initialization
 	void Start () {
         currentTile = new Tile();
-        Init();
-	
+        Init();	
 	}
 
     public void Init()
@@ -79,7 +81,7 @@ public class PathFinder : MonoBehaviour {
             if (!targetTile.current.Contains(new Point((int)this.transform.position.x, (int)this.transform.position.y)))
                 if (PathFound == null && !done)
                 {
-                    AStarWrapper();
+                   // AStarWrapper();
                     done = false;
                 }
 
@@ -92,9 +94,6 @@ public class PathFinder : MonoBehaviour {
 				Debug.DrawLine(this.transform.position, towards, Color.red);
 
                 this.gameObject.GetComponent<SmoothLookAt>().target = towards;
-#if _DEBUG
-                speed = 30;
-#endif
                 this.transform.position = Vector3.MoveTowards(this.transform.position, towards, Time.deltaTime * speed);
                 
 				var temp = Vector3.Distance(this.transform.position, towards) ;
@@ -122,20 +121,38 @@ public class PathFinder : MonoBehaviour {
 			Debug.DrawLine(t.start, t.end);
 		}
 
+        this.animation.Play("walk");
+        GUITEXT.transform.LookAt(this.transform);
+        GUITEXT.transform.Rotate(0, 180, 0);
 	}
 
     void AStarWrapper()
     { 
         if(thisTile == null)
             thisTile = TileBase.GetTileFromPos(this.transform.position);
-		var t = BFS.GetPath(targetTile, thisTile);
+		var t = AStar.GetPath(targetTile, thisTile);
         PathFound = new Stack<Tile>(t);        
     }
 
-
-
-    void OnCollisionEnter(Collision obj)
+    void BFSWrapper()
     {
-
+        if (thisTile == null)
+            thisTile = TileBase.GetTileFromPos(this.transform.position);
+        var t = BFS.GetPath(targetTile, thisTile);
+        PathFound = new Stack<Tile>(t);   
     }
+
+    void OnGUI()
+    {
+        if (GUI.Button(new Rect(Screen.width - 100, 0, 100, 100), "ASTAR"))
+        {
+            AStarWrapper();
+        }
+        if (GUI.Button(new Rect(Screen.width - 100, 100, 100, 100), "BFS")) 
+        {
+            BFSWrapper();
+        }
+    }
+
+    
 }
