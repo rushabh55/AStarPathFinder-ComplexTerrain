@@ -32,8 +32,8 @@ public class AStar
                 {
                     for (int i = 0; i < path.Count - 1; i++)
                     {
-                        Debug.Log(u);
-                        Debug.Log(getH(Target, path.ElementAt(i)) + getG(origin, path.ElementAt(i)));
+                        //Debug.Log(u);
+                        //Debug.Log(getH(Target, path.ElementAt(i)) + getG(origin, path.ElementAt(i)));
 
                         if (path.ElementAt(i) != null && path.ElementAt(i + 1) != null)
                             PathFinder.debugLineColl.Add(new Vector3Col(path.ElementAt(i).current.PositionVec, path.ElementAt(i + 1).current.PositionVec));
