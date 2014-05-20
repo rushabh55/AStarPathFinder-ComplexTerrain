@@ -14,16 +14,15 @@ public class BFS
         Point p = new Point((int)Target.current.x, (int)Target.current.y);
         while (internalData.Count > 0)
         {
-            double min = double.MinValue;
-			Tile minTile = internalData.Peek();
-            foreach (var u in internalData)
+            double min = double.MaxValue;
+			Tile minTile = internalData.FirstOrDefault();
+            for (int i = 0; i < internalData.Count; i++)
             {
-                var fitness = getH(Target, u) + getG(origin, u);
-
+                var fitness = getH(Target, internalData.ElementAt(i)) + getG(origin, internalData.ElementAt(i));
                 if (min > fitness)
                 {
                     min = fitness;
-                    minTile = u;
+                    minTile = internalData.ElementAt(i);
                 }
             }
 
@@ -33,6 +32,9 @@ public class BFS
                 {
                     for (int i = 0; i < path.Count - 1; i++)
                     {
+                        Debug.Log(u);
+                        Debug.Log(getH(Target, path.ElementAt(i)) + getG(origin, path.ElementAt(i)));
+
 						if(path.ElementAt(i) != null && path.ElementAt(i + 1) != null)
                         	PathFinder.debugLineColl.Add(new Vector3Col(path.ElementAt(i).current.PositionVec, path.ElementAt(i + 1).current.PositionVec));
                     }
@@ -40,8 +42,19 @@ public class BFS
                 }
             }
 
-            if (!path.Contains(minTile))
+            bool flag = true;
+            foreach(var tw in path)
+                if (tw.current.x == minTile.current.x && tw.current.y == minTile.current.y)
+                {
+                    flag = false;
+                    Debug.Log("BROKE");
+                    break;
+                }
+
+            if (flag)
+            {
                 path.Add(minTile);
+            }
 
 			var t = TileBase.GetLeft(internalData.Peek().current);
 			if(t != null && !internalData.Contains(t))
@@ -67,10 +80,10 @@ public class BFS
 
     private static float getH(Tile next, Tile current)
     {
-        if (!Physics.Raycast(new Vector3(next.current.position.x, 0, next.current.position.y), new Vector3(current.current.position.x, 0, next.current.position.y)))
-        {
-            return float.MaxValue;
-        }
+        //if (!Physics.Raycast(new Vector3(next.current.position.x, 0, next.current.position.y), new Vector3(current.current.position.x, 0, next.current.position.y)))
+        //{
+        //    return float.MaxValue;
+        //}
 		Vector3 ONE = next.current.PositionVec;
 		Vector3 TWO = current.current.PositionVec;
 		return Vector3.Distance(ONE, TWO) + (next.current.terrainHeight + current.current.terrainHeight) / 2;
