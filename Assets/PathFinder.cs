@@ -72,6 +72,8 @@ public class PathFinder : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
+        float speed = 20;
 		    targetTile = TileBase.GetTileFromPos(target.transform.position);
           
             if (!targetTile.current.Contains(new Point((int)this.transform.position.x, (int)this.transform.position.y)))
@@ -90,9 +92,11 @@ public class PathFinder : MonoBehaviour {
 				Debug.DrawLine(this.transform.position, towards, Color.red);
 
                 this.gameObject.GetComponent<SmoothLookAt>().target = towards;
+#if _DEBUG
+                speed = 30;
+#endif
+                this.transform.position = Vector3.MoveTowards(this.transform.position, towards, Time.deltaTime * speed);
                 
-                this.transform.position = Vector3.MoveTowards(this.transform.position, towards, Time.deltaTime * 25);
-                this.transform.LookAt(this.transform.forward);
 				var temp = Vector3.Distance(this.transform.position, towards) ;
 	            if (temp < 1)
 	            {
@@ -102,7 +106,7 @@ public class PathFinder : MonoBehaviour {
 		    }
 		    else
 		    {
-			    Debug.Log("Breaking");
+                this.transform.position = Vector3.MoveTowards(this.transform.position, target.transform.position, Time.deltaTime * speed);
 		    }
 
         if(!done && PathFound != null)
